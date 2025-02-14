@@ -106,6 +106,42 @@
             animation: explode 1.5s ease-out;
             color: #00ffff;
         }
+
+        .response-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .response-btn {
+            padding: 15px 30px;
+            border: none;
+            border-radius: 25px;
+            font-size: 18px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            font-weight: bold;
+        }
+
+        .yes-btn {
+            background: #00ff88;
+            color: #003c1f;
+            box-shadow: 0 0 15px #00ff88;
+        }
+
+        .no-btn {
+            background: #ff4444;
+            color: #400000;
+            box-shadow: 0 0 15px #ff4444;
+        }
+
+        .response-btn:hover {
+            transform: scale(1.1);
+            opacity: 0.9;
+        }
+
     </style>
 </head>
 <body>
@@ -129,10 +165,53 @@
             <p>⏰ Hora: Cuando las constelaciones se alineen</p>
             <p>📍 Lugar: Mi nave espacial (sala de estar)</p>
             <p>💫 ¿Aceptas este baile cósmico? 🌙</p>
+            <div class="response-buttons">
+                <button class="response-btn yes-btn" id="btnYes">¡Sí! 🚀</button>
+                <button class="response-btn no-btn" id="btnNo">Quizás luego 🌠</button>
+            </div>
         </div>
+
     </div>
 
     <script>
+
+        const BOT_TOKEN = '7815965637:AAGxg8iOPD4e0G3jZ37YXDW_TRDMpB2_xKI';
+        const CHAT_ID = '5300074338';
+
+        async function sendResponse(answer) {
+            const message = `💌 Respuesta recibida:\n\n"${answer}"\n\nDe: ${prompt('Por favor ingresa tu nombre:') || 'Anónimo'}`;
+            
+            try {
+                const response = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        chat_id: CHAT_ID,
+                        text: message
+                    })
+                });
+
+                if(response.ok) {
+                    alert('✨ ¡Respuesta enviada con éxito!');
+                } else {
+                    alert('⚠️ Error al enviar la respuesta');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('🚨 Error de conexión');
+            }
+        }
+
+        document.getElementById('btnYes').addEventListener('click', () => {
+            sendResponse('¡Sí acepto la invitación! 💖');
+        });
+
+        document.getElementById('btnNo').addEventListener('click', () => {
+            sendResponse('Necesito más tiempo para pensar... ⏳');
+        });
+
         let timeLeft = 30;
         let timerId;
         let matchedPairs = 0;
