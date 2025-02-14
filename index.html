@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Invitación Cósmica - La La Land</title>
+    <style>
+        body {
+            margin: 0;
+            background: #000;
+            font-family: 'Courier New', monospace;
+            min-height: 100vh;
+            overflow: hidden;
+            color: #fff;
+        }
+
+        .stars {
+            position: fixed;
+            width: 100vw;
+            height: 100vh;
+            animation: twinkle 2s infinite;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .game-container {
+            background: rgba(0, 8, 29, 0.9);
+            padding: 20px;
+            border-radius: 15px;
+            border: 2px solid #4b0082;
+            box-shadow: 0 0 30px #6a5acd80;
+            position: relative;
+        }
+
+        .invitation-card {
+            background: linear-gradient(45deg, #000428, #004e92);
+            color: #e6e6fa;
+            padding: 30px;
+            border-radius: 10px;
+            display: none;
+            margin: 20px 0;
+            border: 1px solid #9370db;
+            box-shadow: 0 0 40px #483d8b;
+            position: relative;
+        }
+
+        .timer {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            color: #00ffff;
+            font-size: 24px;
+            text-shadow: 0 0 10px #00ffff;
+        }
+
+        .memory-game {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin-top: 35px;
+        }
+
+        .memory-card {
+            background: #00008b;
+            height: 80px;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            transition: 0.3s all;
+            border: 1px solid #4169e1;
+        }
+
+        .memory-card.flipped {
+            background: #0000cd;
+            transform: rotateY(180deg);
+        }
+
+        h1, h3 {
+            color: #9370db;
+            text-align: center;
+            text-shadow: 0 0 15px #8a2be2;
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 1; }
+        }
+
+        @keyframes explode {
+            0% { transform: scale(1); opacity: 1; }
+            100% { transform: scale(5); opacity: 0; }
+        }
+
+        .explosion {
+            position: absolute;
+            pointer-events: none;
+            animation: explode 1.5s ease-out;
+            color: #00ffff;
+        }
+    </style>
+</head>
+<body>
+    <div class="stars"></div>
+    
+    <div class="container">
+        <div class="timer" id="timer">60</div>
+        <h1>🚀 Invitación Interestelar 🎵</h1>
+        
+        <div class="game-container" id="gameContainer">
+            <h3>⏳ Encuentra las parejas antes que el tiempo se agote!</h3>
+            <div class="memory-game" id="memoryGame"></div>
+        </div>
+
+        <div class="invitation-card" id="invitationCard">
+            <h2>🌌 Querida Diana 🌠</h2>
+            <p>✨ Te invito a un viaje estelar donde la música y las estrellas se encontrarán...</p>
+            <p>🎥 Película: <em>"La La Land"</em></p>
+            <p>🍷 Acompañado del mejor vino galáctico</p>
+            <p>📅 Fecha: Hoy</p>
+            <p>⏰ Hora: Cuando las constelaciones se alineen</p>
+            <p>📍 Lugar: Mi nave espacial (sala de estar)</p>
+            <p>💫 ¿Aceptas este baile cósmico? 🌙</p>
+        </div>
+    </div>
+
+    <script>
+        let timeLeft = 60;
+        let timerId;
+        let matchedPairs = 0;
+        let flippedCards = [];
+        const emojis = ['🎹', '🎬', '🍷', '💫', '🌌', '🎆'];
+        const explosionEmojis = ['💥', '✨', '🌟', '☄️', '🌠'];
+
+        function createStars() {
+            const container = document.querySelector('.stars');
+            for(let i = 0; i < 200; i++) {
+                const star = document.createElement('div');
+                star.style.position = 'absolute';
+                star.style.left = Math.random() * 100 + 'vw';
+                star.style.top = Math.random() * 100 + 'vh';
+                star.style.width = Math.random() * 3 + 'px';
+                star.style.height = star.style.width;
+                star.style.background = '#fff';
+                star.style.borderRadius = '50%';
+                star.style.animation = `twinkle ${1 + Math.random() * 2}s infinite`;
+                container.appendChild(star);
+            }
+        }
+        createStars();
+
+        function startTimer() {
+            timerId = setInterval(() => {
+                timeLeft--;
+                document.getElementById('timer').textContent = timeLeft;
+                
+                if(timeLeft <= 0) {
+                    clearInterval(timerId);
+                    gameExplosion();
+                }
+            }, 1000);
+        }
+
+        function gameExplosion() {
+            const gameContainer = document.getElementById('gameContainer');
+            for(let i = 0; i < 50; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'explosion';
+                particle.textContent = explosionEmojis[Math.floor(Math.random() * explosionEmojis.length)];
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.top = Math.random() * 100 + '%';
+                gameContainer.appendChild(particle);
+                
+                setTimeout(() => particle.remove(), 1500);
+            }
+            
+            setTimeout(restartGame, 2000);
+        }
+
+        function restartGame() {
+            timeLeft = 30;
+            matchedPairs = 0;
+            flippedCards = [];
+            
+            document.getElementById('timer').textContent = timeLeft;
+            document.getElementById('memoryGame').innerHTML = '';
+            initializeGame();
+            startTimer();
+        }
+
+        function initializeGame() {
+            const gamePairs = [...emojis, ...emojis].sort(() => Math.random() - 0.5);
+            const memoryGame = document.getElementById('memoryGame');
+            
+            gamePairs.forEach(emoji => {
+                const card = document.createElement('div');
+                card.className = 'memory-card';
+                card.innerHTML = `<span style="opacity:0">${emoji}</span>`;
+                
+                card.addEventListener('click', () => handleCardClick(card));
+                memoryGame.appendChild(card);
+            });
+        }
+
+        function handleCardClick(card) {
+            if(!card.classList.contains('flipped') && flippedCards.length < 2 && timeLeft > 0) {
+                card.classList.add('flipped');
+                card.querySelector('span').style.opacity = '1';
+                flippedCards.push(card);
+                
+                if(flippedCards.length === 2) {
+                    setTimeout(checkMatch, 800);
+                }
+            }
+        }
+
+        function checkMatch() {
+            const [card1, card2] = flippedCards;
+            
+            if(card1.innerHTML === card2.innerHTML) {
+                matchedPairs++;
+                if(matchedPairs === emojis.length) {
+                    clearInterval(timerId);
+                    showInvitation();
+                }
+            } else {
+                card1.classList.remove('flipped');
+                card2.classList.remove('flipped');
+                card1.querySelector('span').style.opacity = '0';
+                card2.querySelector('span').style.opacity = '0';
+            }
+            flippedCards = [];
+        }
+
+        function showInvitation() {
+            document.getElementById('gameContainer').style.display = 'none';
+            document.getElementById('invitationCard').style.display = 'block';
+            
+            setInterval(() => {
+                const star = document.createElement('div');
+                star.style.position = 'absolute';
+                star.style.background = '#fff';
+                star.style.width = '2px';
+                star.style.height = '2px';
+                star.style.borderRadius = '50%';
+                star.style.left = Math.random() * 100 + '%';
+                star.style.top = Math.random() * 100 + '%';
+                star.style.animation = 'twinkle 1s infinite';
+                invitationCard.appendChild(star);
+                
+                setTimeout(() => star.remove(), 1000);
+            }, 300);
+        }
+
+        initializeGame();
+        startTimer();
+    </script>
+</body>
+</html>
